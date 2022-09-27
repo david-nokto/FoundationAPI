@@ -14,16 +14,15 @@ namespace Foundation.Presentation.Controllers
         [HttpGet]
         public IActionResult GetCharacters()
         {
-            try
-            {
-                var characters = service.CharacterService.GetAllCharacters(trackChanges: false);
-                return Ok(characters);
-            }
-            catch
-            {
+            var characters = service.CharacterService.GetAllCharacters(trackChanges: false);
+            return Ok(characters);
+        }
 
-                return StatusCode(500, "Internal server error");
-            }
+        [HttpGet("{id:guid}")]
+        public IActionResult GetCharacter(Guid id)
+        {
+            var character = service.CharacterService.GetCharacter(id, trackChanges: false);
+            return Ok(character);
         }
 
     }

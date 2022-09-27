@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Foundation.Core.Exceptions;
 using Foundation.Core.Logger;
 using Foundation.Core.Repository;
 using Service.Contracts;
@@ -21,17 +22,22 @@ namespace Service
 
         public IEnumerable<CharacterDto> GetAllCharacters(bool trackChanges)
         {
-            try
-            {
-                var characters = uoW.Character.GetAllCharacters(trackChanges);
-                var charactersDto = mapper.Map<IEnumerable<CharacterDto>>(characters);
-                return charactersDto;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Something went wrong in the {nameof(GetAllCharacters)} service method {ex}");
-                throw;
-            }
+
+            var characters = uoW.Character.GetAllCharacters(trackChanges);
+            var charactersDto = mapper.Map<IEnumerable<CharacterDto>>(characters);
+            return charactersDto;
+
+
+        }
+
+        public CharacterDto GetCharacter(Guid id, bool trackChanges)
+        {
+            var character = uoW.Character.GetCharacter(id, trackChanges);
+            if (character == null)
+                throw new CharacterNotFoundException(id);
+
+            var characterDto = mapper.Map<CharacterDto>(character);
+            return characterDto;
         }
     }
 }

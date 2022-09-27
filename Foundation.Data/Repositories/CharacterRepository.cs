@@ -14,5 +14,11 @@ namespace Foundation.Data.Repositories
             FindAll(trackChanges)
                 .OrderBy(c => c.Name)
                 .ToList();
+
+        public Character GetCharacter(Guid characterId, bool trackChanges) =>
+            FindByCondition(c => c.Id.Equals(characterId), trackChanges)
+                .SingleOrDefault();
+
+
     }
 }

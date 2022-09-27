@@ -1,3 +1,4 @@
+using Foundation.Core.Logger;
 using FoundationAPI.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
@@ -18,25 +19,33 @@ builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddControllers() // This will route incoming requests to presentation layer instead of default Controller folder
-    .AddApplicationPart(typeof(Foundation.Presentation.AssemblyReference).Assembly);
+builder.Services.AddControllers(config =>
+{
+    config.RespectBrowserAcceptHeader = true;
+}).AddXmlDataContractSerializerFormatters()
+  .AddApplicationPart(typeof(Foundation.Presentation.AssemblyReference).Assembly); // This will route incoming requests to presentation layer instead of default Controller folder
 
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+var logger = app.Services.GetRequiredService<ILoggerManager>();
+app.ConfigureExceptionHandler(logger);
 
-if (app.Environment.IsDevelopment())
-{
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseHsts(); // Security
-}
+if (app.Environment.IsProduction())
+    app.UseHsts();
+
+//if (app.Environment.IsDevelopment())
+//{
+//    //app.UseSwagger();
+//    //app.UseSwaggerUI();
+//    app.UseDeveloperExceptionPage();
+//}
+//else
+//{
+//    app.UseHsts(); // Security
+//}
 
 app.UseHttpsRedirection();
 

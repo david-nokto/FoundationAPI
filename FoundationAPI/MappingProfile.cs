@@ -8,7 +8,9 @@ namespace FoundationAPI
     {
         public MappingProfile()
         {
+            //Be cautious when working with Dtos that are records, dont need to use some special Ctor-projection metod
             CreateMap<Character, CharacterDto>();
+            CreateMap<Planet, PlanetDto>();
 
         }
     }

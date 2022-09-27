@@ -10,5 +10,17 @@ namespace Foundation.Data.Repositories
         {
 
         }
+
+        public IEnumerable<Planet> GetPlanets(bool trackChanges) =>
+            FindAll(trackChanges)
+                .OrderBy(c => c.Name)
+                .ToList();
+
+        public Planet GetPlanet(Guid id, bool trackChanges) =>
+            FindByCondition(p => p.Id == id, trackChanges)
+                .SingleOrDefault();
+
+
+
     }
 }
